@@ -1,0 +1,17 @@
+<h2>{{ title }}</h2>
+<div fxLayout="row" fxLayoutAlign="space-between">
+  <div fxFlex="50">
+    <svg #svg id="svg" style="height:100%; width:100%;"></svg>
+  </div>
+  <div fxFlex="50" fxLayout="column">
+
+    <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+
+    <h5>Input: {{graph.data[0].y[0]}}</h5>
+    <input type="number" pInputText [(ngModel)]="graph.data[0].y[0]" />
+    <p-slider [(ngModel)]="graph.data[0].y[0]"></p-slider>
+    <plotly-plot [data]="data"></plotly-plot>
+
+
+  </div>
+</div>

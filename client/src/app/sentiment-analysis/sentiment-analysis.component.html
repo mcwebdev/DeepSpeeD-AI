@@ -1,0 +1,22 @@
+<div id='main' fxLayout="row" fxLayoutAlign="start start" style="min-height:350px;">
+  <div fxFlex="20" class="description" fxFlexFill>
+    This is a demo of the toxicity model, which classifies text according to whether it exhibits offensive attributes
+    (i.e. profanity, sexual explicitness). The samples in the table below were taken from this
+    <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data">Kaggle dataset</a>
+  </div>
+  <div fxFlex="80">
+    <div id="table-wrapper"></div>
+  </div>
+</div>
+<div fxLayout="column" layout-margin>
+  <div fxLayout="row">
+    <p fxFlex="33">Enter text below and click 'Classify' to add it to the table.</p>
+  </div>
+  <div fxLayout="row">
+    <div fxFlex="33">
+      <input fxFlex id="classify-new-text-input" placeholder="i.e. 'you suck'">
+      <div id="classify-new-text">Classify</div>
+    </div>
+  </div>
+</div>
+<div [hidden]="!loading" class="blockUi"></div>

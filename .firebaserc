@@ -1,0 +1,5 @@
+{
+  "projects": {
+    "default": "deepspeed-460b4"
+  }
+}

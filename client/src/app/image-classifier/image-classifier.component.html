@@ -1,0 +1,20 @@
+<div [hidden]="loading" fxLayout="row" fxLayoutAlign="start start" class="ic">
+  <div fxLayout="column" layout-align="center center" class="img-container" fxFlex="50">
+    <label class="fileContainer">
+      <fa-icon [icon]="faImage"></fa-icon> Select an image to classify...
+      <input type="file" (change)="fileChangeEvent($event)" />
+    </label>
+
+    <img [src]="imageSrc" #img *ngIf="imageSrc" />
+
+    <div *ngIf="predictions" class="list-group" [@listAnimation]="predictions.length" fxLayout="row" fxFlex>
+      <div class="list-group-item" *ngFor="let prediction of predictions">
+        {{prediction.className}} - {{prediction.probability}}
+      </div>
+    </div>
+  </div>
+
+  <svg #svg id="svg" width="960" height="500"></svg>
+</div>
+
+<div [hidden]="!loading" class="blockUi"></div>

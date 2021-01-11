@@ -1,0 +1,33 @@
+h2 {
+  color: #ffffff;
+  text-shadow: 1px 1px #070707;
+  padding: 5px 8px;
+  font-family: "Open Sans", sans-serif;
+}
+
+a {
+  color: #007bff;
+}
+
+.description {
+  background: #e0e7ee;
+  padding: 8px;
+  margin-top: 10px;
+  margin-right: 20px;
+  border-radius: 5px;
+  line-height: 21px;
+
+  a {
+    color: #109238;
+    text-decoration: none;
+    background-color: transparent;
+    background: #fff;
+    padding: 1px 3px;
+    padding-top: 1px;
+    padding-right: 3px;
+    padding-bottom: 1px;
+    padding-left: 3px;
+    text-decoration: underline;
+    border-radius: 3px;
+  }
+}

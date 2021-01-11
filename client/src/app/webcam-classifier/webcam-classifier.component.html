@@ -1,0 +1,13 @@
+<div [hidden]="loading" fxLayout="row" fxLayoutAlign="start start">
+  <div class="videoNode" fxLayout="column" fxFlex="50">
+    <button class="callout" (click)="start()"> <fa-icon [icon]="faVideo" style="max-height: none;"></fa-icon>  Start Classifying Webcam Input</button>
+    <video autoplay playsinline muted id="webcam" #video></video>
+    <div *ngIf="predictions" class="list-group" [@listAnimation]="predictions.length" fxLayout="row" fxFlex>
+      <div class="list-group-item" *ngFor="let prediction of predictions">
+        {{prediction.className}} - {{prediction.probability}}
+      </div>
+    </div>
+  </div>
+  <svg #svg id="svg" width="960" height="500"></svg>
+</div>
+<div [hidden]="!loading" class="blockUi"></div>

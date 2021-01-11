@@ -1,0 +1,144 @@
+<!--wip-->
+<div fxLayout="row" fxLayoutAlign="space-between start" fxFlexFill>
+  <div fxFlex="66" class="node duoTone">
+    <h5>Start Speech Commands</h5>
+    <h1 class="db-readout"><!--h1 container for DB readout--></h1>
+    <h1><!--h1 container for Volume Warning readout--></h1>
+    <svg *ngIf="!configureCommands" preserveAspectRatio="none" id="visualizer" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <mask id="mask">
+          <g id="maskGroup"></g>
+        </mask>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#db6247;stop-opacity:1" />
+          <stop offset="40%" style="stop-color:#f6e5d1;stop-opacity:1" />
+          <stop offset="60%" style="stop-color:#5c79c7;stop-opacity:1" />
+          <stop offset="85%" style="stop-color:#b758c0;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#222;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="100%" height="100%" fill="url(#gradient)" mask="url(#mask)"></rect>
+    </svg>
+    <div class="start-stop" fxLayout="row" fxLayoutAlign="space-between center">
+      <div>
+        <label>Probability threshold:</label>
+        <input [(ngModel)]="probaThresholdInput" size="5">
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <div id="result" style="padding:5px;"></div>
+        <button #startButton (click)="start()" [disabled]="isStartBtnDisabled">Start</button>
+        <button #stopButton (click)="stop()" [disabled]="isStopBtnDisabled">Stop</button>
+      </div>
+
+    </div>
+
+    <div class='main-model'>
+      <div #candidateWordsContainer class="candidate-words-hidden" id="candidate-words"></div>
+    </div>
+    <plotly-plot *ngIf="roc" id="roc-plot" [data]="roc.data" [layout]="roc.layout" class="plots"></plotly-plot>
+    <plotly-plot *ngIf="precision" id="loss-plot" [data]="precision.estimates" [layout]="precision.layout" class="plots"></plotly-plot>
+  </div>
+
+  <div fxFlex="33" class="node" fxLayout="column" fxFlexGap="20px">
+    <h5>Create New Custom Configured Speech Commands</h5>
+    <button (click)="createNewSpeachCommands()" ySpace>Create New Speech Commands</button>
+    <div [hidden]="preTrained">
+      <h5>Load Pretrained Models</h5>
+
+      <div fxLayout="column" fxLayoutGap="20px">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <select #savedTransferModelsSelect id="saved-transfer-models" fxFlex="75">
+            <option value="1"></option>
+          </select>
+          <button [textContent]="loadTransferModelButtonTextContent" (click)="loadTransferModel()" [disabled]="isLoadTransferModelBtnDisabled"></button>
+          <button [textContent]="deleteTransferModelButtonTextContent" (click)="deleteTransferModel()" [disabled]="isDeleteTransferModelBtnDisabled">Delete</button>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="start center" spaceInputs>
+          <span>Epochs:</span>
+          <input [(ngModel)]="epochsInput" fxFlex="10">
+          <span>Fine-tuning (FT) epochs:</span>
+          <input [(ngModel)]="fineTuningEpochsInput" fxFlex="10">
+          <span>Augment by mixing noise:</span>
+          <input type="checkbox" id="augment-by-mixing-noise">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="drag-block-lg footer"
+     [ngDraggable]="draggable"
+     [position]="position"
+     [zIndex]="zIndex"
+     [zIndexMoving]="zIndexMoving"
+     [preventDefaultEvent]="preventDefaultEvent"
+     [trackPosition]="trackPosition">
+  <span class="dragger">Draggable</span>
+  <div #statusDisplay id="status-display">  </div>
+</div>
+
+<div *ngIf="configureCommands" class="overlay"></div>
+<div *ngIf="configureCommands" class="configureCommands">
+  <h5 class="header " fxLayout="row" fxLayoutAlign="space-between">
+    Configure New Speech Commands
+    <div class="pos">
+      <button class="allowed" [textContent]="startTransferLearnButtonTextContent" #startTransferLearnButton (click)="startTransferLearn(); showCharts = !showCharts" disabled>Start transfer learning</button>
+      <button [textContent]="saveTransferModelButtonTextContent" (click)="saveTransferModel()" [disabled]="isSaveTransferModelBtnDisabled" [ngClass]="{'allowed': canSaveModel}">Save model</button>
+      <button #downloadAsFileButton (click)="downloadAsFile()" [disabled]="isDownloadAsFileBtnDisabled" >↓ Download dataset as file</button>
+      <button [textContent]="evalModelOnDatasetButtonTextContent" id="eval-model-on-dataset" (click)="evalModelOnDataset()" [disabled]="isEvalModelOnDatasetBtnDisabled"></button>
+      <button (click)="configureCommands = !configureCommands">Close</button>
+    </div>
+    
+  </h5>
+  <svg preserveAspectRatio="none" id="visualizer" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+      <mask id="mask">
+        <g id="maskGroup"></g>
+      </mask>
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#db6247;stop-opacity:1" />
+        <stop offset="40%" style="stop-color:#f6e5d1;stop-opacity:1" />
+        <stop offset="60%" style="stop-color:#5c79c7;stop-opacity:1" />
+        <stop offset="85%" style="stop-color:#b758c0;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#222;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#gradient)" mask="url(#mask)"></rect>
+  </svg>
+  <div class="transfer-learn-section">
+    <div fxLayout="row" fxLayoutAlign="start center" spaceInputs>
+      <input #transferModelNameInput size="20" [(ngModel)]="transferModelName" [disabled]="isTransferModelNameInputDisabled" placeholder="model name">
+      <input #learnWordsInput size="36" [(ngModel)]="learnWords" [disabled]="isLearnWordsInputDisabled">
+      <select #durationMultiplierSelect id="duration-multiplier" [disabled]="isDurationMultiplierSelectDisabled" fxFlex="10">
+        <option value="1">Duration x1</option>
+        <option value="2" selected="">Duration x2</option>
+      </select>
+      <input #includeTimeDomainWaveformCheckbox type="checkbox" id="include-audio-waveform">
+      <span #includeTimeDomainWaveformCheckbox id="include-audio-waveform-label" style="margin-right:5px;">Include audio waveform</span>
+      <button class="allowed" [textContent]="enterLearnWordsTextContent" (click)="enterLearnWords()" [disabled]="isEnterLearnWordsBtnDisabled"></button>
+    </div>
+
+    <div id="transfer-learn-history"></div>
+    <div #collectButtonsDiv id="collect-words">
+    </div>
+
+    <div>
+      <input #datasetFileInput type="file" id="dataset-file-input" [disabled]="isDatasetFileInputDisabled" style="margin-right:5px;">
+      <button [textContent]="uploadFilesButtonTextContent" id="upload-dataset" (click)="uploadFiles()" [disabled]="isUploadFilesBtnDisabled">↑ Upload dataset</button>
+    </div>
+
+    <div id="plots" *ngIf="showCharts" fxLayout="row" fxLayoutAlign="space-between start">
+
+      <!--{{graphTrainLoss.trainLossValuesCollection | json}}-->
+      <plotly-plot *ngIf="graphTrainLoss" id="loss-plot" [data]="graphTrainLoss.trainLossValuesCollection" [layout]="graphTrainLoss.layout" class="plots"></plotly-plot>
+      <plotly-plot *ngIf="graphAccuracy" id="accuracy-plot" [data]="graphAccuracy.accuracyValuesCollection" [layout]="graphAccuracy.layout" class="plots"></plotly-plot>
+      <div>
+        <div>
+          <span [textContent]="evalResultsSpan" id="eval-results" class="eval-results"></span>
+        </div>
+        <!--<plotly-plot id="roc-plot" [data]="roc.data" [layout]="roc.layout" class="plots"></plotly-plot>-->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,3 @@
+https://www.microsoft.com/en-us/sql-server/sql-server-downloads
+Download Express 
+Install, on installation complete splash screen, install ssms.
